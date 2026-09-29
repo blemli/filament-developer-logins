@@ -62,24 +62,6 @@ class FilamentDeveloperLoginsServiceProvider extends PackageServiceProvider
                 return Blade::render('<x-filament-developer-logins::developer-logins />');
             },
         );
-
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::GLOBAL_SEARCH_AFTER,
-            static function (): ?string {
-                $panel = Filament::getCurrentPanel();
-                if (! self::panelHasPlugin($panel)) {
-                    return null;
-                }
-
-                /** @var FilamentDeveloperLoginsPlugin $plugin */
-                $plugin = $panel->getPlugin('filament-developer-logins');
-                if (! $plugin->getEnabled() || ! $plugin->getSwitchable()) {
-                    return null;
-                }
-
-                return Blade::render('@livewire(\'menu-logins\')');
-            },
-        );
     }
 
     protected static function panelHasPlugin(?Panel $panel): bool

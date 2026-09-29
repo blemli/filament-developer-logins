@@ -1,22 +1,44 @@
-@if (filled($users))
-    <div>
-        <x-filament::dropdown  placement="bottom-end" teleport>
-            <x-slot name="trigger">
-                <x-filament::button icon="heroicon-o-user" color="gray" outlined="false">
-                    {{ auth()->check() ? __('filament-developer-logins::auth.switch-to') : __('filament-developer-logins::auth.login-as') }}
-                </x-filament::button>
-            </x-slot>
+@php
+    $label = auth()->check() ? __('filament-developer-logins::auth.switch-to') : __('filament-developer-logins::auth.login-as');
+@endphp
 
+<div>
+    @if (filled($users))
+        @if ($inUserMenu ?? false)
             <x-filament::dropdown.list>
-                @foreach ($users as $label => $credentials)
+                <x-filament::dropdown.header icon="heroicon-o-user">
+                    {{ $label }}
+                </x-filament::dropdown.header>
+
+                @foreach ($users as $userLabel => $credentials)
                     <x-filament::dropdown.list.item
                         wire:click="loginAs('{{ $credentials }}')"
                         color="{{ $credentials === $current ? 'primary' : 'gray' }}"
+                        icon="heroicon-o-user"
                     >
-                        {{ "$label ($credentials)" }}
+                        {{ "$userLabel ($credentials)" }}
                     </x-filament::dropdown.list.item>
                 @endforeach
             </x-filament::dropdown.list>
-        </x-filament::dropdown>
-    </div>
-@endif
+        @else
+            <x-filament::dropdown placement="bottom-end" teleport>
+                <x-slot name="trigger">
+                    <x-filament::button icon="heroicon-o-user" color="gray" outlined="false">
+                        {{ $label }}
+                    </x-filament::button>
+                </x-slot>
+
+                <x-filament::dropdown.list>
+                    @foreach ($users as $userLabel => $credentials)
+                        <x-filament::dropdown.list.item
+                            wire:click="loginAs('{{ $credentials }}')"
+                            color="{{ $credentials === $current ? 'primary' : 'gray' }}"
+                        >
+                            {{ "$userLabel ($credentials)" }}
+                        </x-filament::dropdown.list.item>
+                    @endforeach
+                </x-filament::dropdown.list>
+            </x-filament::dropdown>
+        @endif
+    @endif
+</div>

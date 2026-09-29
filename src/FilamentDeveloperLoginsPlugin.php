@@ -10,6 +10,9 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Schemas\Concerns\HasColumns;
 use Filament\Support\Concerns\EvaluatesClosures;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
 
 class FilamentDeveloperLoginsPlugin implements Plugin
 {
@@ -23,6 +26,8 @@ class FilamentDeveloperLoginsPlugin implements Plugin
     public Closure | bool $enabled = false;
 
     public Closure | bool $switchable = true;
+
+    public Closure | string | null $switcherRenderHook = null;
 
     /**
      * @var array<string, string>
@@ -57,7 +62,20 @@ class FilamentDeveloperLoginsPlugin implements Plugin
 
     public function boot(Panel $panel): void
     {
-        //
+        FilamentView::registerRenderHook(
+            $this->getSwitcherRenderHook(),
+            function () use ($panel): ?string {
+                if (Filament::getCurrentPanel()?->getId() !== $panel->getId()) {
+                    return null;
+                }
+
+                if (! $this->getEnabled() || ! $this->getSwitchable()) {
+                    return null;
+                }
+
+                return Blade::render('@livewire(\'menu-logins\')');
+            },
+        );
     }
 
     public static function current(): static
@@ -106,6 +124,44 @@ class FilamentDeveloperLoginsPlugin implements Plugin
     public function getSwitchable(): bool
     {
         return $this->evaluate($this->switchable);
+    }
+
+    /**
+     * Where the "Switch to" menu renders. Without a hook it sits next to the
+     * global search in the topbar, or — when the panel has no topbar — inside
+     * the user menu dropdown, as a list of users.
+     */
+    public function switcherRenderHook(Closure | string | null $hook): static
+    {
+        $this->switcherRenderHook = $hook;
+
+        return $this;
+    }
+
+    public function getSwitcherRenderHook(): string
+    {
+        $hook = $this->evaluate($this->switcherRenderHook);
+
+        if (filled($hook)) {
+            return $hook;
+        }
+
+        $panel = $this->panelId ? Filament::getPanel($this->panelId) : Filament::getCurrentPanel();
+
+        return $panel?->hasTopbar() === false
+            ? PanelsRenderHook::USER_MENU_PROFILE_AFTER
+            : PanelsRenderHook::GLOBAL_SEARCH_AFTER;
+    }
+
+    /**
+     * Inside the user menu the switcher is a list of users, not a button with its own dropdown.
+     */
+    public function rendersSwitcherInUserMenu(): bool
+    {
+        return in_array($this->getSwitcherRenderHook(), [
+            PanelsRenderHook::USER_MENU_PROFILE_BEFORE,
+            PanelsRenderHook::USER_MENU_PROFILE_AFTER,
+        ], true);
     }
 
     /**

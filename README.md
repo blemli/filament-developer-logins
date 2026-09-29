@@ -82,6 +82,20 @@ FilamentDeveloperLoginsPlugin::make()
 
 ![switchable-screenshot.png](https://raw.githubusercontent.com/DutchCodingCompany/filament-developer-logins/main/docs-assets/screenshots/switchable-screenshot.png)
 
+### switcherRenderHook()
+
+The "Switch to" menu renders next to the global search in the topbar. A panel without a topbar (`->topbar(false)`, the user menu in the sidebar) never renders that hook, so there the menu lands inside the user menu dropdown instead, as a list of users. Pick another [render hook](https://filamentphp.com/docs/panels/customizing-styling/render-hooks) yourself with the switcherRenderHook() method:
+
+```php
+use Filament\View\PanelsRenderHook;
+
+// ...
+FilamentDeveloperLoginsPlugin::make()
+    ->switcherRenderHook(PanelsRenderHook::SIDEBAR_FOOTER) // This also accepts a closure.
+```
+
+Inside the user menu (`USER_MENU_PROFILE_BEFORE` / `USER_MENU_PROFILE_AFTER`) the users are plain menu items; everywhere else it is the button with its own dropdown.
+
 ### column()
 
 By default, the user column is set to `email`. If you want to use a different column, you can use the column() method.

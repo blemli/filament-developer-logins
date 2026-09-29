@@ -27,13 +27,7 @@ parameters:
 		-
 			message: '#^Call to an undefined method Illuminate\\Testing\\TestResponse\:\:assertSeeLivewire\(\)\.$#'
 			identifier: method.notFound
-			count: 2
-			path: tests/Feature/MenuLoginsTest.php
-
-		-
-			message: '#^Unable to resolve the template type TComponent in call to method Livewire\\LivewireManager\:\:test\(\)$#'
-			identifier: argument.templateType
-			count: 3
+			count: 5
 			path: tests/Feature/MenuLoginsTest.php
 
 		-
