@@ -94,7 +94,7 @@ FilamentDeveloperLoginsPlugin::make()
     ->switcherRenderHook(PanelsRenderHook::SIDEBAR_FOOTER) // This also accepts a closure.
 ```
 
-Inside the user menu (`USER_MENU_PROFILE_BEFORE` / `USER_MENU_PROFILE_AFTER`) the users are plain menu items; everywhere else it is the button with its own dropdown.
+Inside the user menu (`USER_MENU_PROFILE_BEFORE` / `USER_MENU_PROFILE_AFTER`) the users are plain menu items — the label as the item, the credentials as its tooltip; everywhere else it is the button with its own dropdown.
 
 ### column()
 

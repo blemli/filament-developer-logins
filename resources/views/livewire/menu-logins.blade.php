@@ -10,13 +10,15 @@
                     {{ $label }}
                 </x-filament::dropdown.header>
 
+                {{-- A menu item has one truncating line: the label carries the name, the tooltip the credentials. --}}
                 @foreach ($users as $userLabel => $credentials)
                     <x-filament::dropdown.list.item
                         wire:click="loginAs('{{ $credentials }}')"
                         color="{{ $credentials === $current ? 'primary' : 'gray' }}"
                         icon="heroicon-o-user"
+                        :tooltip="$credentials"
                     >
-                        {{ "$userLabel ($credentials)" }}
+                        {{ $userLabel }}
                     </x-filament::dropdown.list.item>
                 @endforeach
             </x-filament::dropdown.list>

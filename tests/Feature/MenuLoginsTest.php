@@ -139,7 +139,9 @@ final class MenuLoginsTest extends TestCase
         Livewire::actingAs($user)
             ->test(MenuLogins::class)
             ->assertViewHas('inUserMenu', true)
-            ->assertSee('Administrator (developer@dutchcodingcompany.com)')
+            ->assertSee('Administrator')
+            ->assertDontSee('Administrator (developer@dutchcodingcompany.com)')
+            ->assertSeeHtml('developer@dutchcodingcompany.com')
             ->assertDontSeeHtml('fi-dropdown-trigger');
     }
 
